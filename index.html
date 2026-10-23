@@ -71,6 +71,12 @@ body::before{
 .mood-btn{flex:1;padding:12px 4px;border:2px solid #ffd0e4;border-radius:16px;background:rgba(255,255,255,.7);cursor:pointer;font-size:26px;transition:all .25s;display:flex;flex-direction:column;align-items:center;gap:2px;}
 .mood-btn.selected{border-color:var(--rose);background:linear-gradient(135deg,#fff,#ffe4ef);transform:scale(1.06);box-shadow:0 6px 18px rgba(225,29,116,.25);}
 .mood-label{font-size:10px;color:var(--muted);font-weight:600;}
+.mem-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
+.mem-item{border-radius:16px;overflow:hidden;background:rgba(255,255,255,.7);border:1px solid #ffe0ee;position:relative;animation:fadeUp .4s ease;}
+.mem-item img{width:100%;height:120px;object-fit:cover;display:block;}
+.mem-cap{padding:8px 10px;font-size:12px;color:var(--text);line-height:1.3;font-weight:600;}
+.mem-del{position:absolute;top:6px;right:6px;background:rgba(0,0,0,.5);color:#fff;border:none;border-radius:50%;width:26px;height:26px;cursor:pointer;font-size:14px;display:flex;align-items:center;justify-content:center;}
+.mem-empty{text-align:center;color:var(--muted);font-size:13px;padding:20px;}
 .counter-card{text-align:center;background:linear-gradient(135deg,rgba(255,255,255,.85),rgba(255,228,239,.85));backdrop-filter:blur(14px);border-radius:24px;padding:28px 20px;box-shadow:0 12px 40px rgba(225,29,116,.18);border:1px solid rgba(255,255,255,.9);margin-bottom:18px;position:relative;overflow:hidden;}
 .counter-card::before{content:'';position:absolute;top:-50%;left:-50%;width:200%;height:200%;background:conic-gradient(from 0deg, transparent, rgba(244,114,182,.15), transparent 30%);animation:spin 8s linear infinite;}
 @keyframes spin{to{transform:rotate(360deg);}}
@@ -123,6 +129,7 @@ body::before{
   <div class="tabs-wrap">
     <button class="tab-btn active" data-tab="milestones"><span class="tab-emoji">🏆</span>Milestones</button>
     <button class="tab-btn" data-tab="mood"><span class="tab-emoji">😊</span>Mood</button>
+    <button class="tab-btn" data-tab="memories"><span class="tab-emoji">📸</span>Memories</button>
     <button class="tab-btn" data-tab="notes"><span class="tab-emoji">💌</span>Notes</button>
     <button class="tab-btn" data-tab="bucket"><span class="tab-emoji">🎯</span>Bucket</button>
   </div>
@@ -161,6 +168,18 @@ body::before{
       <div style="font-size:13px;color:var(--muted);margin-top:8px;font-weight:600;" id="moodText">Set your moods above</div>
     </div>
   </div>
+  <!-- MEMORIES -->
+  <div class="tab-page" id="tab-memories">
+    <div class="card">
+      <label style="display:block;width:100%;padding:16px;border:2px dashed var(--rose2);border-radius:14px;text-align:center;color:var(--rose);font-weight:700;font-size:14px;cursor:pointer;margin-bottom:10px;">📸 + ADD A PHOTO MEMORY</label>
+      <input type="file" id="memPhoto" accept="image/*" style="display:none;">
+      <input type="text" id="memCaption" class="add-input" placeholder="Caption this memory... (optional)" maxlength="60">
+      <button class="add-btn" id="addMem" disabled>SAVE MEMORY 💫</button>
+    </div>
+    <div class="mem-grid" id="memGrid"></div>
+    <div class="mem-empty" id="memEmpty" style="display:none;">No memories yet — add your first photo together! 📸💕</div>
+  </div>
+
   <div class="tab-page" id="tab-notes">
     <div class="card">
       <input type="text" id="noteInput" class="add-input" placeholder="Write a little love note..." maxlength="120">
@@ -182,7 +201,7 @@ body::before{
 (function(){
   var ACCESS_PASSWORD = "love123";
   var LS_KEY="loveTrackerData";
-  var data={anniv:null,name1:"You",name2:"My Love",milestones:[],mood1:null,mood2:null,moodDate:null,notes:[],bucket:[]};
+  var data={anniv:null,name1:"You",name2:"My Love",milestones:[],mood1:null,mood2:null,moodDate:null,notes:[],bucket:[],memories:[]};
   function load(){try{var s=localStorage.getItem(LS_KEY);if(s){data=Object.assign(data,JSON.parse(s));}}catch(e){}}
   function save(){localStorage.setItem(LS_KEY,JSON.stringify(data));}
   load();
@@ -198,7 +217,7 @@ body::before{
   pwdInput.addEventListener('keydown',function(e){if(e.key==='Enter')unlock();});
   function init(){
     if(!data.anniv){document.getElementById('setupCard').style.display='block';}
-    renderCounter();renderMs();renderMood();renderNotes();renderBucket();renderNames();
+    renderCounter();renderMs();renderMood();renderNotes();renderBucket();renderMemories();renderNames();
   }
   function renderNames(){
     document.getElementById('moodName1').textContent=data.name1+"'s mood today";
@@ -305,6 +324,46 @@ body::before{
     list.querySelectorAll('.del-btn').forEach(function(b){b.addEventListener('click',function(e){e.stopPropagation();data.bucket.splice(+b.dataset.i,1);save();renderBucket();});});
     document.getElementById('bucketProgress').textContent=done+" / "+data.bucket.length+" done — keep dreaming big! ✨";
   }
+  // ===== MEMORIES (photos) =====
+  var memPhoto=document.getElementById('memPhoto'), memCaption=document.getElementById('memCaption'), addMem=document.getElementById('addMem');
+  var pendingImg=null;
+  document.querySelector('label[for], label').addEventListener('click',function(e){if(e.target.textContent.includes('ADD A PHOTO MEMORY')){memPhoto.click();}});
+  memPhoto.addEventListener('change',function(e){
+    var f=e.target.files[0];if(!f)return;
+    var r=new FileReader();
+    r.onload=function(ev){
+      var img=new Image();
+      img.onload=function(){
+        var max=800, w=img.width, h=img.height;
+        if(w>max||h>max){if(w>h){h=Math.round(h*max/w);w=max;}else{w=Math.round(w*max/h);h=max;}}
+        var c=document.createElement('canvas');c.width=w;c.height=h;
+        c.getContext('2d').drawImage(img,0,0,w,h);
+        pendingImg=c.toDataURL('image/jpeg',.7);
+        addMem.disabled=false;
+        addMem.textContent="📸 PHOTO READY — TAP TO SAVE";
+      };
+      img.src=ev.target.result;
+    };
+    r.readAsDataURL(f);
+  });
+  addMem.addEventListener('click',function(){
+    if(!pendingImg)return;
+    data.memories.unshift({img:pendingImg,cap:memCaption.value.trim(),date:new Date().toLocaleDateString('en-US',{month:'short',day:'numeric'})});
+    save();pendingImg=null;memPhoto.value='';memCaption.value='';addMem.disabled=true;addMem.textContent='SAVE MEMORY 💫';renderMemories();
+  });
+  function renderMemories(){
+    var grid=document.getElementById('memGrid'), empty=document.getElementById('memEmpty');
+    grid.innerHTML='';
+    if(data.memories.length===0){empty.style.display='block';return;}
+    empty.style.display='none';
+    data.memories.forEach(function(m,i){
+      var el=document.createElement('div');el.className='mem-item';
+      el.innerHTML='<button class="mem-del" data-i="'+i+'">✕</button><img src="'+m.img+'" alt="memory"><div class="mem-cap">'+(m.cap?m.cap:'<span style="color:var(--muted);">'+m.date+'</span>')+(m.cap?'<br><span style="font-size:10px;color:var(--muted);font-weight:600;">'+m.date+'</span>':'')+'</div>';
+      grid.appendChild(el);
+    });
+    grid.querySelectorAll('.mem-del').forEach(function(b){b.addEventListener('click',function(){data.memories.splice(+b.dataset.i,1);save();renderMemories();});});
+  }
+
   var hl=document.getElementById('heartsLayer');
   function spawnHeart(){
     var d=document.createElement('div');d.className='heart-float';
