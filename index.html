@@ -2,117 +2,130 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <title>Our Love Tracker 💕</title>
-<link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@400;500;600;700&family=Caveat:wght@500;700&family=Cormorant+Garamond:wght@600&display=swap" rel="stylesheet">
-<script src="https://cdn.tailwindcss.com"></script>
+<link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#e11d74">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="LoveTracker">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' rx='22' fill='%23e11d74'/%3E%3Cpath d='M50 78L30 60c-6-5.5-9-11-9-17 0-8 6.5-14.5 14.5-14.5 5 0 9.5 2.5 12.5 7 3-4.5 7.5-7 12.5-7C58.5 28.5 65 35 65 43c0 6-3 11.5-9 17L50 78z' fill='%23fff'/%3E%3C/svg%3E">
+<link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@400;500;600;700&family=Caveat:wght@500;700&family=Cormorant+Garamond:ital,wght@0,600;1,600&display=swap" rel="stylesheet">
 <style>
-:root{--rose:#e11d74;--rose2:#f472b6;--gold:#f0b429;--bg:#fff5f7;--card:#fff;--text:#3b1a2e;--muted:#a06b85;--soft:#ffe4ef;}
-*{box-sizing:border-box;}
-body{font-family:'Quicksand',sans-serif;background:radial-gradient(ellipse at top,#ffe4ef 0%,#fff5f7 50%,#fff 100%);color:var(--text);margin:0;min-height:100vh;}
+:root{
+  --rose:#e11d74;--rose2:#f472b6;--rose3:#ff8fc0;
+  --gold:#f0b429;--gold2:#ffd76a;
+  --text:#3b1a2e;--muted:#b07a92;--soft:#ffe4ef;
+}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
+body{
+  font-family:'Quicksand',sans-serif;background:linear-gradient(135deg,#ffd6e8 0%,#ffeef5 35%,#fff5f7 60%,#ffe8f2 100%);
+  background-attachment:fixed;color:var(--text);margin:0;min-height:100vh;overflow-x:hidden;
+}
+body::before{
+  content:'';position:fixed;inset:0;pointer-events:none;z-index:0;
+  background:
+    radial-gradient(circle at 15% 20%, rgba(244,114,182,.25) 0%, transparent 40%),
+    radial-gradient(circle at 85% 70%, rgba(240,180,41,.18) 0%, transparent 40%),
+    radial-gradient(circle at 50% 100%, rgba(225,29,116,.15) 0%, transparent 50%);
+  animation:bgShift 12s ease-in-out infinite alternate;
+}
+@keyframes bgShift{0%{transform:scale(1) rotate(0deg);}100%{transform:scale(1.1) rotate(3deg);}}
 .font-hand{font-family:'Caveat',cursive;}
 .font-serif{font-family:'Cormorant Garamond',serif;}
-
-/* Hearts floating */
-@keyframes floatUp{0%{transform:translateY(0) rotate(0);opacity:0;}15%{opacity:.7;}100%{transform:translateY(-400px) rotate(30deg);opacity:0;}}
-.heart-float{position:fixed;bottom:-20px;animation:floatUp linear infinite;pointer-events:none;z-index:0;}
-
-/* Lock screen */
-#lockScreen{position:fixed;inset:0;z-index:100;background:linear-gradient(135deg,#2a0a1c,#4a1230);display:flex;align-items:center;justify-content:center;flex-direction:column;padding:20px;}
-.lock-card{background:rgba(255,255,255,.08);backdrop-filter:blur(10px);border:1px solid rgba(244,114,182,.3);border-radius:24px;padding:36px 28px;width:100%;max-width:360px;text-align:center;}
-.lock-input{width:100%;background:rgba(255,255,255,.1);border:1px solid rgba(244,114,182,.4);border-radius:12px;padding:14px 16px;color:#fff;font-size:16px;text-align:center;letter-spacing:.3em;outline:none;margin-top:16px;}
-.lock-input::placeholder{color:rgba(255,255,255,.4);letter-spacing:.1em;}
-.lock-btn{width:100%;margin-top:14px;padding:13px;border:none;border-radius:12px;background:linear-gradient(135deg,var(--rose),var(--rose2));color:#fff;font-weight:700;font-size:15px;cursor:pointer;letter-spacing:.1em;}
-.lock-error{color:#ff8fa8;font-size:13px;margin-top:10px;min-height:18px;}
-
-/* Tabs */
-.tab-btn{flex:1;padding:10px 6px;border:none;background:transparent;color:var(--muted);font-weight:600;font-size:12px;cursor:pointer;border-bottom:3px solid transparent;transition:all .2s;font-family:'Quicksand',sans-serif;}
-.tab-btn.active{color:var(--rose);border-bottom-color:var(--rose);}
-.tab-page{display:none;}
-.tab-page.active{display:block;animation:fadeIn .4s ease;}
-@keyframes fadeIn{from{opacity:0;transform:translateY(10px);}to{opacity:1;transform:translateY(0);}}
-
-.card{background:var(--card);border-radius:18px;padding:20px;box-shadow:0 4px 20px rgba(225,29,116,.08);border:1px solid #ffe0ee;margin-bottom:16px;}
-.add-input{width:100%;padding:11px 14px;border:1px solid #ffd0e4;border-radius:12px;outline:none;font-size:14px;font-family:'Quicksand',sans-serif;margin-bottom:8px;}
-.add-input:focus{border-color:var(--rose);}
-.add-btn{width:100%;padding:11px;border:none;border-radius:12px;background:linear-gradient(135deg,var(--rose),var(--rose2));color:#fff;font-weight:700;cursor:pointer;font-size:14px;}
-.item{display:flex;align-items:center;gap:10px;padding:12px 14px;background:#fff7fa;border-radius:12px;margin-bottom:8px;border:1px solid #ffe0ee;}
-.item-text{flex:1;font-size:14px;}
-.del-btn{background:none;border:none;color:#ff8fa8;cursor:pointer;font-size:18px;padding:4px;}
-.check-item{display:flex;align-items:center;gap:10px;padding:10px 14px;background:#fff7fa;border-radius:12px;margin-bottom:8px;border:1px solid #ffe0ee;cursor:pointer;}
+@keyframes floatUp{0%{transform:translateY(0) rotate(0) scale(.6);opacity:0;}15%{opacity:.8;}100%{transform:translateY(-110vh) rotate(40deg) scale(1);opacity:0;}}
+.heart-float{position:fixed;bottom:-30px;animation:floatUp linear infinite;pointer-events:none;z-index:1;}
+#lockScreen{position:fixed;inset:0;z-index:100;background:linear-gradient(160deg,#2a0a1c 0%,#4a1230 50%,#6b1a42 100%);display:flex;align-items:center;justify-content:center;flex-direction:column;padding:20px;overflow:hidden;}
+#lockScreen::before{content:'';position:absolute;inset:0;background:radial-gradient(circle at 50% 30%, rgba(244,114,182,.3), transparent 60%);animation:pulseGlow 4s ease-in-out infinite;}
+@keyframes pulseGlow{0%,100%{opacity:.5;transform:scale(1);}50%{opacity:1;transform:scale(1.15);}}
+.lock-card{position:relative;background:rgba(255,255,255,.1);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);border:1px solid rgba(255,255,255,.2);border-radius:28px;padding:40px 28px;width:100%;max-width:360px;text-align:center;box-shadow:0 20px 60px rgba(0,0,0,.4);animation:cardIn .8s cubic-bezier(.34,1.56,.64,1);}
+@keyframes cardIn{from{opacity:0;transform:translateY(30px) scale(.9);}to{opacity:1;transform:translateY(0) scale(1);}}
+.lock-heart{font-size:56px;animation:heartBeat 1.5s ease-in-out infinite;display:inline-block;}
+@keyframes heartBeat{0%,100%{transform:scale(1);}15%{transform:scale(1.2);}30%{transform:scale(1);}45%{transform:scale(1.15);}60%{transform:scale(1);}}
+.lock-input{width:100%;background:rgba(255,255,255,.12);border:1.5px solid rgba(255,255,255,.25);border-radius:14px;padding:14px 16px;color:#fff;font-size:16px;text-align:center;letter-spacing:.3em;outline:none;margin-top:20px;transition:all .3s;font-family:'Quicksand',sans-serif;}
+.lock-input:focus{border-color:var(--rose2);box-shadow:0 0 20px rgba(244,114,182,.4);background:rgba(255,255,255,.18);}
+.lock-input::placeholder{color:rgba(255,255,255,.35);letter-spacing:.1em;}
+.lock-btn{width:100%;margin-top:16px;padding:14px;border:none;border-radius:14px;background:linear-gradient(135deg,var(--rose),var(--rose2));color:#fff;font-weight:700;font-size:15px;cursor:pointer;letter-spacing:.15em;box-shadow:0 8px 24px rgba(225,29,116,.5);transition:transform .2s;font-family:'Quicksand',sans-serif;}
+.lock-btn:active{transform:scale(.96);}
+.lock-error{color:#ff8fa8;font-size:13px;margin-top:12px;min-height:18px;}
+.tabs-wrap{display:flex;background:rgba(255,255,255,.6);backdrop-filter:blur(10px);border-radius:18px;padding:5px;margin-bottom:18px;box-shadow:0 4px 20px rgba(225,29,116,.1);border:1px solid rgba(255,255,255,.7);}
+.tab-btn{flex:1;padding:11px 4px;border:none;background:transparent;color:var(--muted);font-weight:700;font-size:11px;cursor:pointer;border-radius:14px;transition:all .3s;font-family:'Quicksand',sans-serif;display:flex;flex-direction:column;align-items:center;gap:3px;}
+.tab-btn .tab-emoji{font-size:18px;}
+.tab-btn.active{color:#fff;background:linear-gradient(135deg,var(--rose),var(--rose2));box-shadow:0 4px 14px rgba(225,29,116,.4);}
+.tab-page{display:none;animation:fadeUp .5s cubic-bezier(.34,1.56,.64,1);}
+.tab-page.active{display:block;}
+@keyframes fadeUp{from{opacity:0;transform:translateY(16px);}to{opacity:1;transform:translateY(0);}}
+.card{background:rgba(255,255,255,.75);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);border-radius:22px;padding:22px;box-shadow:0 8px 32px rgba(225,29,116,.12);border:1px solid rgba(255,255,255,.8);margin-bottom:16px;}
+.add-input{width:100%;padding:13px 16px;border:1.5px solid #ffd0e4;border-radius:14px;outline:none;font-size:14px;font-family:'Quicksand',sans-serif;margin-bottom:10px;background:rgba(255,255,255,.7);transition:all .3s;}
+.add-input:focus{border-color:var(--rose);box-shadow:0 0 0 3px rgba(225,29,116,.12);background:#fff;}
+.add-btn{width:100%;padding:13px;border:none;border-radius:14px;background:linear-gradient(135deg,var(--rose),var(--rose2));color:#fff;font-weight:700;cursor:pointer;font-size:14px;letter-spacing:.05em;box-shadow:0 6px 18px rgba(225,29,116,.35);transition:transform .15s;font-family:'Quicksand',sans-serif;}
+.add-btn:active{transform:scale(.97);}
+.item{display:flex;align-items:center;gap:10px;padding:14px 16px;background:rgba(255,255,255,.7);border-radius:16px;margin-bottom:10px;border:1px solid #ffe0ee;box-shadow:0 2px 8px rgba(225,29,116,.06);animation:fadeUp .4s ease;}
+.item-text{flex:1;font-size:14px;line-height:1.4;}
+.del-btn{background:none;border:none;color:#ff8fa8;cursor:pointer;font-size:18px;padding:6px;flex-shrink:0;}
+.check-item{display:flex;align-items:center;gap:12px;padding:14px 16px;background:rgba(255,255,255,.7);border-radius:16px;margin-bottom:10px;border:1px solid #ffe0ee;cursor:pointer;transition:all .2s;animation:fadeUp .4s ease;}
+.check-item:active{transform:scale(.98);}
 .check-item.done .item-text{text-decoration:line-through;color:var(--muted);}
-.check-box{width:22px;height:22px;border:2px solid var(--rose);border-radius:6px;display:flex;align-items:center;justify-content:center;flex-shrink:0;color:#fff;font-weight:700;font-size:14px;}
-.check-item.done .check-box{background:var(--rose);}
-
-.mood-btn{flex:1;padding:14px 6px;border:2px solid #ffd0e4;border-radius:14px;background:#fff;cursor:pointer;font-size:24px;transition:all .2s;}
-.mood-btn.selected{border-color:var(--rose);background:var(--soft);transform:scale(1.05);}
-.mood-label{font-size:11px;color:var(--muted);margin-top:4px;}
-
-.counter-num{font-family:'Cormorant Garamond',serif;font-size:56px;font-weight:600;color:var(--rose);line-height:1;text-shadow:0 2px 20px rgba(225,29,116,.2);}
-.pill{display:inline-block;padding:4px 12px;border-radius:999px;background:var(--soft);color:var(--rose);font-size:12px;font-weight:600;}
-::-webkit-scrollbar{width:6px;}::-webkit-scrollbar-thumb{background:var(--rose2);border-radius:3px;}
+.check-box{width:24px;height:24px;border:2.5px solid var(--rose);border-radius:8px;display:flex;align-items:center;justify-content:center;flex-shrink:0;color:#fff;font-weight:700;font-size:15px;transition:all .25s;}
+.check-item.done .check-box{background:linear-gradient(135deg,var(--rose),var(--rose2));border-color:transparent;}
+.mood-btn{flex:1;padding:12px 4px;border:2px solid #ffd0e4;border-radius:16px;background:rgba(255,255,255,.7);cursor:pointer;font-size:26px;transition:all .25s;display:flex;flex-direction:column;align-items:center;gap:2px;}
+.mood-btn.selected{border-color:var(--rose);background:linear-gradient(135deg,#fff,#ffe4ef);transform:scale(1.06);box-shadow:0 6px 18px rgba(225,29,116,.25);}
+.mood-label{font-size:10px;color:var(--muted);font-weight:600;}
+.counter-card{text-align:center;background:linear-gradient(135deg,rgba(255,255,255,.85),rgba(255,228,239,.85));backdrop-filter:blur(14px);border-radius:24px;padding:28px 20px;box-shadow:0 12px 40px rgba(225,29,116,.18);border:1px solid rgba(255,255,255,.9);margin-bottom:18px;position:relative;overflow:hidden;}
+.counter-card::before{content:'';position:absolute;top:-50%;left:-50%;width:200%;height:200%;background:conic-gradient(from 0deg, transparent, rgba(244,114,182,.15), transparent 30%);animation:spin 8s linear infinite;}
+@keyframes spin{to{transform:rotate(360deg);}}
+.counter-num{font-family:'Cormorant Garamond',serif;font-size:64px;font-weight:600;background:linear-gradient(135deg,var(--rose),#ff6b9d);-webkit-background-clip:text;background-clip:text;color:transparent;line-height:1;position:relative;}
+.pill{display:inline-block;padding:6px 14px;border-radius:999px;background:rgba(225,29,116,.1);color:var(--rose);font-size:12px;font-weight:700;border:1px solid rgba(225,29,116,.2);}
+.header-title{font-family:'Caveat',cursive;font-size:38px;background:linear-gradient(135deg,var(--rose),#ff6b9d,var(--gold));-webkit-background-clip:text;background-clip:text;color:transparent;text-align:center;margin:0;font-weight:700;}
+::-webkit-scrollbar{width:0;height:0;}
 </style>
 </head>
 <body>
-
-<!-- Floating hearts -->
 <div id="heartsLayer"></div>
-
-<!-- LOCK SCREEN -->
 <div id="lockScreen">
   <div class="lock-card">
-    <div style="font-size:40px;margin-bottom:8px;">💕</div>
-    <div class="font-serif" style="font-size:28px;color:#ffd0e4;margin:0 0 4px;">Our Love Tracker</div>
-    <div style="font-size:12px;color:rgba(255,255,255,.5);letter-spacing:.2em;text-transform:uppercase;">just for us</div>
+    <div class="lock-heart">💖</div>
+    <div class="font-serif" style="font-size:30px;color:#ffd0e4;margin:8px 0 4px;font-style:italic;">Our Love Tracker</div>
+    <div style="font-size:11px;color:rgba(255,255,255,.5);letter-spacing:.25em;text-transform:uppercase;">just for us</div>
     <input type="password" id="pwdInput" class="lock-input" placeholder="enter our password" maxlength="20">
     <button class="lock-btn" id="unlockBtn">UNLOCK 🔐</button>
     <div class="lock-error" id="lockError"></div>
   </div>
 </div>
-
-<!-- MAIN APP -->
-<div id="app" style="display:none;position:relative;z-index:1;max-width:480px;margin:0 auto;padding:24px 16px 60px;">
-
-  <!-- Header -->
-  <div style="text-align:center;margin-bottom:20px;">
-    <div class="font-hand" style="font-size:32px;color:var(--rose);margin:0;">Our Love Tracker</div>
-    <div style="font-size:12px;color:var(--muted);letter-spacing:.15em;text-transform:uppercase;">every moment, together</div>
+<div id="app" style="display:none;position:relative;z-index:2;max-width:480px;margin:0 auto;padding:28px 16px 60px;">
+  <div style="text-align:center;margin-bottom:22px;">
+    <div class="header-title">Our Love Tracker</div>
+    <div style="font-size:11px;color:var(--muted);letter-spacing:.2em;text-transform:uppercase;margin-top:2px;">every moment, together</div>
   </div>
-
-  <!-- Setup (first time) -->
   <div id="setupCard" class="card" style="display:none;">
-    <div class="font-serif" style="font-size:22px;color:var(--rose);margin:0 0 12px;text-align:center;">First time? Let's set us up ✨</div>
-    <label style="font-size:13px;color:var(--muted);font-weight:600;">Our anniversary date</label>
+    <div class="font-serif" style="font-size:24px;background:linear-gradient(135deg,var(--rose),#ff6b9d);-webkit-background-clip:text;background-clip:text;color:transparent;margin:0 0 16px;text-align:center;font-style:italic;">First time? Let's set us up ✨</div>
+    <label style="font-size:12px;color:var(--muted);font-weight:700;letter-spacing:.05em;">Our anniversary date</label>
     <input type="date" id="annivInput" class="add-input" style="margin-top:6px;">
-    <label style="font-size:13px;color:var(--muted);font-weight:600;">Your name</label>
+    <label style="font-size:12px;color:var(--muted);font-weight:700;letter-spacing:.05em;">Your name</label>
     <input type="text" id="name1Input" class="add-input" placeholder="e.g. You" maxlength="15">
-    <label style="font-size:13px;color:var(--muted);font-weight:600;">Her name</label>
+    <label style="font-size:12px;color:var(--muted);font-weight:700;letter-spacing:.05em;">Her name</label>
     <input type="text" id="name2Input" class="add-input" placeholder="e.g. My Love" maxlength="15">
     <button class="add-btn" id="saveSetup">SAVE US 💖</button>
   </div>
-
-  <!-- Counter -->
-  <div class="card" style="text-align:center;background:linear-gradient(135deg,#fff,#fff0f6);">
-    <div style="font-size:12px;letter-spacing:.2em;text-transform:uppercase;color:var(--muted);margin-bottom:6px;">Days we've been together</div>
-    <div class="counter-num" id="daysCounter">0</div>
-    <div style="font-size:14px;color:var(--muted);margin-top:4px;" id="annivLabel">since forever</div>
-    <div style="margin-top:12px;display:flex;gap:8px;justify-content:center;flex-wrap:wrap;">
-      <span class="pill" id="weeksPill">0 weeks</span>
-      <span class="pill" id="hoursPill">0 hours</span>
-      <span class="pill" id="heartsPill">∞ hearts</span>
+  <div class="counter-card">
+    <div style="position:relative;">
+      <div style="font-size:11px;letter-spacing:.25em;text-transform:uppercase;color:var(--muted);margin-bottom:8px;font-weight:700;">Days we've been together</div>
+      <div class="counter-num" id="daysCounter">∞</div>
+      <div style="font-size:13px;color:var(--muted);margin-top:6px;font-weight:600;" id="annivLabel">since forever</div>
+      <div style="margin-top:14px;display:flex;gap:8px;justify-content:center;flex-wrap:wrap;">
+        <span class="pill" id="weeksPill">0 weeks</span>
+        <span class="pill" id="hoursPill">0 hours</span>
+        <span class="pill" style="background:rgba(240,180,41,.12);color:#b8860b;border-color:rgba(240,180,41,.3);">∞ hearts</span>
+      </div>
+      <button id="editSetup" style="margin-top:14px;background:none;border:none;color:var(--muted);font-size:12px;cursor:pointer;text-decoration:underline;font-family:'Quicksand',sans-serif;">edit our date</button>
     </div>
-    <button id="editSetup" style="margin-top:14px;background:none;border:none;color:var(--muted);font-size:12px;cursor:pointer;text-decoration:underline;">edit our date</button>
   </div>
-
-  <!-- Tabs -->
-  <div style="display:flex;background:#fff;border-radius:14px;padding:4px;margin-bottom:16px;box-shadow:0 2px 12px rgba(225,29,116,.06);">
-    <button class="tab-btn active" data-tab="milestones">🏆 Milestones</button>
-    <button class="tab-btn" data-tab="mood">😊 Mood</button>
-    <button class="tab-btn" data-tab="notes">💌 Notes</button>
-    <button class="tab-btn" data-tab="bucket">🎯 Bucket List</button>
+  <div class="tabs-wrap">
+    <button class="tab-btn active" data-tab="milestones"><span class="tab-emoji">🏆</span>Milestones</button>
+    <button class="tab-btn" data-tab="mood"><span class="tab-emoji">😊</span>Mood</button>
+    <button class="tab-btn" data-tab="notes"><span class="tab-emoji">💌</span>Notes</button>
+    <button class="tab-btn" data-tab="bucket"><span class="tab-emoji">🎯</span>Bucket</button>
   </div>
-
-  <!-- MILESTONES -->
   <div class="tab-page active" id="tab-milestones">
     <div class="card">
       <input type="text" id="msTitle" class="add-input" placeholder="Milestone name (e.g. First kiss)">
@@ -121,37 +134,33 @@ body{font-family:'Quicksand',sans-serif;background:radial-gradient(ellipse at to
     </div>
     <div id="msList"></div>
   </div>
-
-  <!-- MOOD -->
   <div class="tab-page" id="tab-mood">
     <div class="card">
-      <div style="font-weight:700;font-size:15px;margin-bottom:12px;" id="moodName1">Your mood today</div>
+      <div style="font-weight:700;font-size:15px;margin-bottom:14px;color:var(--rose);" id="moodName1">Your mood today</div>
       <div style="display:flex;gap:8px;" id="moodRow1">
-        <button class="mood-btn" data-mood="😊" data-who="1">😊<div class="mood-label">Happy</div></button>
-        <button class="mood-btn" data-mood="😐" data-who="1">😐<div class="mood-label">Okay</div></button>
-        <button class="mood-btn" data-mood="😢" data-who="1">😢<div class="mood-label">Sad</div></button>
-        <button class="mood-btn" data-mood="😴" data-who="1">😴<div class="mood-label">Tired</div></button>
-        <button class="mood-btn" data-mood="🥰" data-who="1">🥰<div class="mood-label">In love</div></button>
+        <button class="mood-btn" data-mood="😊" data-who="1">😊<span class="mood-label">Happy</span></button>
+        <button class="mood-btn" data-mood="😐" data-who="1">😐<span class="mood-label">Okay</span></button>
+        <button class="mood-btn" data-mood="😢" data-who="1">😢<span class="mood-label">Sad</span></button>
+        <button class="mood-btn" data-mood="😴" data-who="1">😴<span class="mood-label">Tired</span></button>
+        <button class="mood-btn" data-mood="🥰" data-who="1">🥰<span class="mood-label">In love</span></button>
       </div>
     </div>
     <div class="card">
-      <div style="font-weight:700;font-size:15px;margin-bottom:12px;" id="moodName2">Her mood today</div>
+      <div style="font-weight:700;font-size:15px;margin-bottom:14px;color:var(--rose);" id="moodName2">Her mood today</div>
       <div style="display:flex;gap:8px;" id="moodRow2">
-        <button class="mood-btn" data-mood="😊" data-who="2">😊<div class="mood-label">Happy</div></button>
-        <button class="mood-btn" data-mood="😐" data-who="2">😐<div class="mood-label">Okay</div></button>
-        <button class="mood-btn" data-mood="😢" data-who="2">😢<div class="mood-label">Sad</div></button>
-        <button class="mood-btn" data-mood="😴" data-who="2">😴<div class="mood-label">Tired</div></button>
-        <button class="mood-btn" data-mood="🥰" data-who="2">🥰<div class="mood-label">In love</div></button>
+        <button class="mood-btn" data-mood="😊" data-who="2">😊<span class="mood-label">Happy</span></button>
+        <button class="mood-btn" data-mood="😐" data-who="2">😐<span class="mood-label">Okay</span></button>
+        <button class="mood-btn" data-mood="😢" data-who="2">😢<span class="mood-label">Sad</span></button>
+        <button class="mood-btn" data-mood="😴" data-who="2">😴<span class="mood-label">Tired</span></button>
+        <button class="mood-btn" data-mood="🥰" data-who="2">🥰<span class="mood-label">In love</span></button>
       </div>
     </div>
-    <div class="card" style="text-align:center;">
-      <div style="font-size:13px;color:var(--muted);">Today's vibe</div>
-      <div style="font-size:36px;margin-top:8px;" id="moodResult">💑</div>
-      <div style="font-size:13px;color:var(--muted);margin-top:6px;" id="moodText">Set your moods above</div>
+    <div class="card" style="text-align:center;background:linear-gradient(135deg,rgba(255,255,255,.85),rgba(255,236,200,.7));">
+      <div style="font-size:12px;color:var(--muted);letter-spacing:.15em;text-transform:uppercase;font-weight:700;">Today's vibe</div>
+      <div style="font-size:44px;margin-top:10px;" id="moodResult">💑</div>
+      <div style="font-size:13px;color:var(--muted);margin-top:8px;font-weight:600;" id="moodText">Set your moods above</div>
     </div>
   </div>
-
-  <!-- NOTES -->
   <div class="tab-page" id="tab-notes">
     <div class="card">
       <input type="text" id="noteInput" class="add-input" placeholder="Write a little love note..." maxlength="120">
@@ -159,67 +168,49 @@ body{font-family:'Quicksand',sans-serif;background:radial-gradient(ellipse at to
     </div>
     <div id="notesList"></div>
   </div>
-
-  <!-- BUCKET LIST -->
   <div class="tab-page" id="tab-bucket">
     <div class="card">
       <input type="text" id="bucketInput" class="add-input" placeholder="Something to do together..." maxlength="100">
       <button class="add-btn" id="addBucket">+ ADD TO BUCKET LIST</button>
     </div>
     <div id="bucketList"></div>
-    <div style="text-align:center;font-size:13px;color:var(--muted);margin-top:8px;" id="bucketProgress">0 / 0 done</div>
+    <div style="text-align:center;font-size:13px;color:var(--muted);margin-top:10px;font-weight:600;" id="bucketProgress">0 / 0 done</div>
   </div>
-
-  <div style="text-align:center;margin-top:24px;font-size:11px;color:var(--muted);">made with 💖 · only yours</div>
+  <div style="text-align:center;margin-top:28px;font-size:11px;color:var(--muted);letter-spacing:.1em;">made with 💖 · only yours · forever</div>
 </div>
-
 <script>
 (function(){
-  // ===== ⚠️ CHANGE THIS TO YOUR PASSWORD =====
   var ACCESS_PASSWORD = "love123";
-
   var LS_KEY="loveTrackerData";
   var data={anniv:null,name1:"You",name2:"My Love",milestones:[],mood1:null,mood2:null,moodDate:null,notes:[],bucket:[]};
-
   function load(){try{var s=localStorage.getItem(LS_KEY);if(s){data=Object.assign(data,JSON.parse(s));}}catch(e){}}
   function save(){localStorage.setItem(LS_KEY,JSON.stringify(data));}
   load();
-
-  // ===== LOCK =====
   var lock=document.getElementById('lockScreen'), app=document.getElementById('app');
   var pwdInput=document.getElementById('pwdInput'), lockError=document.getElementById('lockError');
   function unlock(){
     if(pwdInput.value===ACCESS_PASSWORD){
-      lock.style.transition='opacity .5s';lock.style.opacity='0';
-      setTimeout(function(){lock.style.display='none';app.style.display='block';init();},500);
-    }else{
-      lockError.textContent="Wrong password 💔 try again";
-      pwdInput.value='';
-    }
+      lock.style.transition='opacity .6s';lock.style.opacity='0';
+      setTimeout(function(){lock.style.display='none';app.style.display='block';init();},600);
+    }else{lockError.textContent="Wrong password 💔 try again";pwdInput.value='';}
   }
   document.getElementById('unlockBtn').addEventListener('click',unlock);
   pwdInput.addEventListener('keydown',function(e){if(e.key==='Enter')unlock();});
-
-  // ===== INIT =====
   function init(){
     if(!data.anniv){document.getElementById('setupCard').style.display='block';}
     renderCounter();renderMs();renderMood();renderNotes();renderBucket();renderNames();
   }
-
   function renderNames(){
     document.getElementById('moodName1').textContent=data.name1+"'s mood today";
     document.getElementById('moodName2').textContent=data.name2+"'s mood today";
   }
-
-  // ===== SETUP =====
   document.getElementById('saveSetup').addEventListener('click',function(){
     var d=document.getElementById('annivInput').value;
     if(!d){alert('Please pick our anniversary date!');return;}
     data.anniv=d;
     data.name1=document.getElementById('name1Input').value.trim()||"You";
     data.name2=document.getElementById('name2Input').value.trim()||"My Love";
-    save();
-    document.getElementById('setupCard').style.display='none';
+    save();document.getElementById('setupCard').style.display='none';
     renderCounter();renderNames();
   });
   document.getElementById('editSetup').addEventListener('click',function(){
@@ -228,21 +219,16 @@ body{font-family:'Quicksand',sans-serif;background:radial-gradient(ellipse at to
     document.getElementById('name1Input').value=data.name1;
     document.getElementById('name2Input').value=data.name2;
   });
-
-  // ===== COUNTER =====
   function renderCounter(){
     if(!data.anniv){document.getElementById('daysCounter').textContent='∞';return;}
-    var start=new Date(data.anniv+'T00:00:00');
-    var now=new Date();
+    var start=new Date(data.anniv+'T00:00:00'), now=new Date();
     var days=Math.floor((now-start)/(1000*60*60*24));
-    document.getElementById('daysCounter').textContent=Math.max(days,0);
+    document.getElementById('daysCounter').textContent=Math.max(days,0).toLocaleString();
     document.getElementById('annivLabel').textContent="since "+new Date(data.anniv).toLocaleDateString('en-US',{month:'long',day:'numeric',year:'numeric'});
-    document.getElementById('weeksPill').textContent=Math.floor(days/7)+" weeks";
+    document.getElementById('weeksPill').textContent=Math.floor(days/7).toLocaleString()+" weeks";
     document.getElementById('hoursPill').textContent=(days*24).toLocaleString()+" hours";
   }
   setInterval(renderCounter,60000);
-
-  // ===== TABS =====
   document.querySelectorAll('.tab-btn').forEach(function(b){
     b.addEventListener('click',function(){
       document.querySelectorAll('.tab-btn').forEach(function(x){x.classList.remove('active');});
@@ -251,11 +237,8 @@ body{font-family:'Quicksand',sans-serif;background:radial-gradient(ellipse at to
       document.getElementById('tab-'+b.dataset.tab).classList.add('active');
     });
   });
-
-  // ===== MILESTONES =====
   document.getElementById('addMs').addEventListener('click',function(){
-    var t=document.getElementById('msTitle').value.trim();
-    var d=document.getElementById('msDate').value;
+    var t=document.getElementById('msTitle').value.trim(), d=document.getElementById('msDate').value;
     if(!t||!d){alert('Add a name AND date!');return;}
     data.milestones.push({title:t,date:d});
     data.milestones.sort(function(a,b){return new Date(a.date)-new Date(b.date);});
@@ -268,23 +251,18 @@ body{font-family:'Quicksand',sans-serif;background:radial-gradient(ellipse at to
       var md=new Date(m.date+'T00:00:00');
       var diff=Math.ceil((md-today)/(1000*60*60*24));
       var label=diff>0?diff+" days to go":diff===0?"TODAY! 🎉":Math.abs(diff)+" days ago";
-      var color=diff>0?'var(--muted)':diff===0?'var(--rose)':'var(--rose2)';
+      var color=diff>0?'var(--muted)':diff===0?'var(--rose)':'#b8860b';
       var el=document.createElement('div');el.className='item';
-      el.innerHTML='<div class="item-text"><strong>'+m.title+'</strong><br><span style="font-size:12px;color:'+color+';font-weight:600;">'+md.toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'})+' · '+label+'</span></div><button class="del-btn" data-i="'+i+'">✕</button>';
+      el.innerHTML='<div class="item-text"><strong style="color:var(--text);">'+m.title+'</strong><br><span style="font-size:12px;color:'+color+';font-weight:700;">'+md.toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'})+' · '+label+'</span></div><button class="del-btn" data-i="'+i+'">✕</button>';
       list.appendChild(el);
     });
-    list.querySelectorAll('.del-btn').forEach(function(b){
-      b.addEventListener('click',function(){data.milestones.splice(+b.dataset.i,1);save();renderMs();});
-    });
+    list.querySelectorAll('.del-btn').forEach(function(b){b.addEventListener('click',function(){data.milestones.splice(+b.dataset.i,1);save();renderMs();});});
   }
-
-  // ===== MOOD =====
   var todayStr=new Date().toDateString();
   if(data.moodDate!==todayStr){data.mood1=null;data.mood2=null;data.moodDate=todayStr;save();}
   document.querySelectorAll('.mood-btn').forEach(function(b){
     b.addEventListener('click',function(){
-      var who=b.dataset.who,mood=b.dataset.mood;
-      if(who==='1'){data.mood1=mood;}else{data.mood2=mood;}
+      if(b.dataset.who==='1'){data.mood1=b.dataset.mood;}else{data.mood2=b.dataset.mood;}
       save();renderMood();
     });
   });
@@ -292,18 +270,13 @@ body{font-family:'Quicksand',sans-serif;background:radial-gradient(ellipse at to
     document.querySelectorAll('#moodRow1 .mood-btn').forEach(function(b){b.classList.toggle('selected',b.dataset.mood===data.mood1);});
     document.querySelectorAll('#moodRow2 .mood-btn').forEach(function(b){b.classList.toggle('selected',b.dataset.mood===data.mood2);});
     var r=document.getElementById('moodResult'),t=document.getElementById('moodText');
-    if(data.mood1&&data.mood2){
-      r.textContent=data.mood1+data.mood2;
-      t.textContent=data.name1+" feels "+data.mood1+" · "+data.name2+" feels "+data.mood2;
-    }else if(data.mood1){r.textContent=data.mood1+"❓";t.textContent="Waiting for "+data.name2+"...";}
+    if(data.mood1&&data.mood2){r.textContent=data.mood1+data.mood2;t.textContent=data.name1+" feels "+data.mood1+" · "+data.name2+" feels "+data.mood2;}
+    else if(data.mood1){r.textContent=data.mood1+"❓";t.textContent="Waiting for "+data.name2+"...";}
     else if(data.mood2){r.textContent="❓"+data.mood2;t.textContent="Waiting for "+data.name1+"...";}
     else{r.textContent="💑";t.textContent="Set your moods above";}
   }
-
-  // ===== NOTES =====
   document.getElementById('addNote').addEventListener('click',function(){
-    var t=document.getElementById('noteInput').value.trim();
-    if(!t)return;
+    var t=document.getElementById('noteInput').value.trim();if(!t)return;
     data.notes.unshift({text:t,date:new Date().toLocaleDateString('en-US',{month:'short',day:'numeric'})});
     save();document.getElementById('noteInput').value='';renderNotes();
   });
@@ -311,53 +284,39 @@ body{font-family:'Quicksand',sans-serif;background:radial-gradient(ellipse at to
     var list=document.getElementById('notesList');list.innerHTML='';
     data.notes.forEach(function(n,i){
       var el=document.createElement('div');el.className='item';
-      el.innerHTML='<div class="item-text"><span class="font-hand" style="font-size:18px;color:var(--rose);">'+n.text+'</span><br><span style="font-size:11px;color:var(--muted);">'+n.date+'</span></div><button class="del-btn" data-i="'+i+'">✕</button>';
+      el.innerHTML='<div class="item-text"><span class="font-hand" style="font-size:20px;color:var(--rose);">'+n.text+'</span><br><span style="font-size:11px;color:var(--muted);font-weight:600;">'+n.date+'</span></div><button class="del-btn" data-i="'+i+'">✕</button>';
       list.appendChild(el);
     });
-    list.querySelectorAll('.del-btn').forEach(function(b){
-      b.addEventListener('click',function(){data.notes.splice(+b.dataset.i,1);save();renderNotes();});
-    });
+    list.querySelectorAll('.del-btn').forEach(function(b){b.addEventListener('click',function(){data.notes.splice(+b.dataset.i,1);save();renderNotes();});});
   }
-
-  // ===== BUCKET LIST =====
   document.getElementById('addBucket').addEventListener('click',function(){
-    var t=document.getElementById('bucketInput').value.trim();
-    if(!t)return;
-    data.bucket.push({text:t,done:false});
-    save();document.getElementById('bucketInput').value='';renderBucket();
+    var t=document.getElementById('bucketInput').value.trim();if(!t)return;
+    data.bucket.push({text:t,done:false});save();document.getElementById('bucketInput').value='';renderBucket();
   });
   function renderBucket(){
-    var list=document.getElementById('bucketList');list.innerHTML='';
-    var done=0;
+    var list=document.getElementById('bucketList');list.innerHTML='';var done=0;
     data.bucket.forEach(function(b,i){
       if(b.done)done++;
       var el=document.createElement('div');el.className='check-item'+(b.done?' done':'');
       el.innerHTML='<div class="check-box">'+(b.done?'✓':'')+'</div><div class="item-text">'+b.text+'</div><button class="del-btn" data-i="'+i+'">✕</button>';
-      el.addEventListener('click',function(e){
-        if(e.target.classList.contains('del-btn'))return;
-        b.done=!b.done;save();renderBucket();
-      });
+      el.addEventListener('click',function(e){if(e.target.classList.contains('del-btn'))return;b.done=!b.done;save();renderBucket();});
       list.appendChild(el);
     });
-    list.querySelectorAll('.del-btn').forEach(function(b){
-      b.addEventListener('click',function(e){e.stopPropagation();data.bucket.splice(+b.dataset.i,1);save();renderBucket();});
-    });
+    list.querySelectorAll('.del-btn').forEach(function(b){b.addEventListener('click',function(e){e.stopPropagation();data.bucket.splice(+b.dataset.i,1);save();renderBucket();});});
     document.getElementById('bucketProgress').textContent=done+" / "+data.bucket.length+" done — keep dreaming big! ✨";
   }
-
-  // ===== FLOATING HEARTS =====
   var hl=document.getElementById('heartsLayer');
   function spawnHeart(){
     var d=document.createElement('div');d.className='heart-float';
-    var sz=10+Math.random()*16;
-    d.style.left=(Math.random()*100)+'%';
-    d.style.animationDuration=(6+Math.random()*6)+'s';
-    var c=['#f472b6','#fb7185','#f0b429','#e11d74'][Math.floor(Math.random()*4)];
-    d.innerHTML='<svg width="'+sz+'" height="'+sz+'" viewBox="0 0 24 24" fill="'+c+'" opacity="0.5"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg>';
-    hl.appendChild(d);setTimeout(function(){d.remove();},12000);
+    var sz=10+Math.random()*18;d.style.left=(Math.random()*100)+'%';
+    d.style.animationDuration=(7+Math.random()*7)+'s';
+    var c=['#f472b6','#fb7185','#f0b429','#e11d74','#ff8fc0'][Math.floor(Math.random()*5)];
+    d.innerHTML='<svg width="'+sz+'" height="'+sz+'" viewBox="0 0 24 24" fill="'+c+'" opacity="0.45"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg>';
+    hl.appendChild(d);setTimeout(function(){d.remove();},14000);
   }
-  for(var i=0;i<6;i++){setTimeout(spawnHeart,i*400);}
-  setInterval(spawnHeart,1200);
+  for(var i=0;i<7;i++){setTimeout(spawnHeart,i*350);}
+  setInterval(spawnHeart,1000);
+  if('serviceWorker' in navigator){navigator.serviceWorker.register('sw.js').catch(function(){});}
 })();
 </script>
 </body>
