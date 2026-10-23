@@ -1,0 +1,24 @@
+{
+  "name": "Our Love Tracker",
+  "short_name": "LoveTracker",
+  "description": "Our private love tracker — just for us",
+  "start_url": "./index.html",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#fff5f7",
+  "theme_color": "#e11d74",
+  "icons": [
+    {
+      "src": "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 192 192'%3E%3Crect width='192' height='192' rx='40' fill='%23e11d74'/%3E%3Cpath d='M96 150l-38-35c-12-11-18-22-18-34 0-16 13-29 29-29 10 0 19 5 27 14 8-9 17-14 27-14 16 0 29 13 29 29 0 12-6 23-18 34l-38 35z' fill='%23fff'/%3E%3C/svg%3E",
+      "sizes": "192x192",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    },
+    {
+      "src": "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512'%3E%3Crect width='512' height='512' rx='100' fill='%23e11d74'/%3E%3Cpath d='M256 400l-102-94c-32-30-48-59-48-91 0-43 35-78 78-78 27 0 51 13 72 37 21-24 45-37 72-37 43 0 78 35 78 78 0 32-16 61-48 91l-102 94z' fill='%23fff'/%3E%3C/svg%3E",
+      "sizes": "512x512",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    }
+  ]
+}
