@@ -78,7 +78,7 @@ body::before{
 .mem-del{position:absolute;top:6px;right:6px;background:rgba(0,0,0,.5);color:#fff;border:none;border-radius:50%;width:26px;height:26px;cursor:pointer;font-size:14px;display:flex;align-items:center;justify-content:center;}
 .mem-empty{text-align:center;color:var(--muted);font-size:13px;padding:20px;}
 .counter-card{text-align:center;background:linear-gradient(135deg,rgba(255,255,255,.85),rgba(255,228,239,.85));backdrop-filter:blur(14px);border-radius:24px;padding:28px 20px;box-shadow:0 12px 40px rgba(225,29,116,.18);border:1px solid rgba(255,255,255,.9);margin-bottom:18px;position:relative;overflow:hidden;}
-.counter-card::before{content:'';position:absolute;top:-50%;left:-50%;width:200%;height:200%;background:conic-gradient(from 0deg, transparent, rgba(244,114,182,.15), transparent 30%);animation:spin 8s linear infinite;}
+.counter-card::before{content:'';position:absolute;top:-50%;left:-50%;width:200%;height:200%;background:conic-gradient(from 0deg, transparent, rgba(244,114,182,.15), transparent 30%);animation:spin 8s linear infinite;pointer-events:none;}
 @keyframes spin{to{transform:rotate(360deg);}}
 .counter-num{font-family:'Cormorant Garamond',serif;font-size:64px;font-weight:600;background:linear-gradient(135deg,var(--rose),#ff6b9d);-webkit-background-clip:text;background-clip:text;color:transparent;line-height:1;position:relative;}
 .pill{display:inline-block;padding:6px 14px;border-radius:999px;background:rgba(225,29,116,.1);color:var(--rose);font-size:12px;font-weight:700;border:1px solid rgba(225,29,116,.2);}
@@ -124,6 +124,12 @@ body::before{
         <span class="pill" style="background:rgba(240,180,41,.12);color:#b8860b;border-color:rgba(240,180,41,.3);">∞ hearts</span>
       </div>
       <button id="editSetup" style="margin-top:14px;background:none;border:none;color:var(--muted);font-size:12px;cursor:pointer;text-decoration:underline;font-family:'Quicksand',sans-serif;">edit our date</button>
+      <div id="nextAnniv" style="margin-top:10px;font-size:12px;color:#b8860b;font-weight:700;display:none;">🎂 next anniversary in <span id="annivCount">0</span> days</div>
+      <div style="margin-top:14px;display:flex;gap:8px;justify-content:center;flex-wrap:wrap;">
+        <button id="reasonBtn" style="padding:8px 16px;border:none;border-radius:999px;background:linear-gradient(135deg,var(--rose),var(--rose2));color:#fff;font-weight:700;font-size:12px;cursor:pointer;box-shadow:0 4px 12px rgba(225,29,116,.3);">💝 reason I love you</button>
+        <button id="songBtn" style="padding:8px 16px;border:none;border-radius:999px;background:linear-gradient(135deg,#b8860b,var(--gold));color:#fff;font-weight:700;font-size:12px;cursor:pointer;box-shadow:0 4px 12px rgba(240,180,41,.3);">🎵 our song</button>
+      </div>
+      <div id="reasonText" class="font-hand" style="font-size:20px;color:var(--rose);margin-top:12px;min-height:24px;"></div>
     </div>
   </div>
   <div class="tabs-wrap">
@@ -246,6 +252,13 @@ body::before{
     document.getElementById('annivLabel').textContent="since "+new Date(data.anniv).toLocaleDateString('en-US',{month:'long',day:'numeric',year:'numeric'});
     document.getElementById('weeksPill').textContent=Math.floor(days/7).toLocaleString()+" weeks";
     document.getElementById('hoursPill').textContent=(days*24).toLocaleString()+" hours";
+    // next anniversary countdown
+    var anniv=new Date(data.anniv+'T00:00:00');
+    var next=new Date(now.getFullYear(),anniv.getMonth(),anniv.getDate());
+    if(next<today){next=new Date(now.getFullYear()+1,anniv.getMonth(),anniv.getDate());}
+    var nd=Math.ceil((next-today)/(1000*60*60*24));
+    var na=document.getElementById('nextAnniv');
+    if(na){if(nd===0){na.innerHTML='🎉 TODAY IS OUR ANNIVERSARY!!!';}else{document.getElementById('annivCount').textContent=nd;}na.style.display='block';}
   }
   setInterval(renderCounter,60000);
   document.querySelectorAll('.tab-btn').forEach(function(b){
@@ -363,6 +376,30 @@ body::before{
     });
     grid.querySelectorAll('.mem-del').forEach(function(b){b.addEventListener('click',function(){data.memories.splice(+b.dataset.i,1);save();renderMemories();});});
   }
+
+  // ===== NEXT ANNIVERSARY + REASONS + SONG =====
+  var reasons=["you laugh at my dumb jokes","you make ordinary days feel like adventures","your smile is my favorite view","you believe in me even when I don't","your hugs fix everything","you're my favorite hello and hardest goodbye","you make me want to be better","your kindness changes every room you walk into","you chose me, and I still can't believe it","you're my peace in the chaos","you remember the little things","you dance with me even when there's no music"];
+  var reasonIdx=0;
+  document.getElementById('reasonBtn').addEventListener('click',function(){
+    reasonIdx=(reasonIdx+Math.floor(1+Math.random()*(reasons.length-1)))%reasons.length;
+    document.getElementById('reasonText').textContent='...because '+reasons[reasonIdx]+' 💖';
+  });
+  var songOn=false,songIfr=null;
+  document.getElementById('songBtn').addEventListener('click',function(){
+    songOn=!songOn;
+    var btn=document.getElementById('songBtn');
+    if(songOn){
+      btn.textContent='⏸ stop music';
+      songIfr=document.createElement('iframe');
+      songIfr.style.cssText='position:fixed;width:1px;height:1px;border:0;opacity:0;pointer-events:none;left:-9999px;top:-9999px;';
+      songIfr.src='https://www.youtube.com/embed/SZ-TS7HliqY?autoplay=1&loop=1&playlist=SZ-TS7HliqY&rel=0';
+      songIfr.allow='autoplay; encrypted-media';
+      document.body.appendChild(songIfr);
+    }else{
+      btn.textContent='🎵 our song';
+      if(songIfr){songIfr.remove();songIfr=null;}
+    }
+  });
 
   var hl=document.getElementById('heartsLayer');
   function spawnHeart(){
